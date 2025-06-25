@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <header>
+        <h1>Your Cart</h1>
+        <a href="index.html">Continue Shopping</a>
+    </header>
+    
+    <main>
+        <div id="cart-items">
+            <!-- Cart items will be loaded here -->
+        </div>
+        <div class="cart-total">
+            <h3>Total: $<span id="total">0</span></h3>
+            <button id="checkout-btn">Proceed to Checkout</button>
+        </div>
+    </main>
+
+    <script src="js/store.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/stripe.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            displayCartItems();
+            
+            document.getElementById('checkout-btn').addEventListener('click', checkout);
+        });
+    </script>
+</body>
+</html>
