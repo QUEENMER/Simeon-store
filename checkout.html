@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUKKY - Checkout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            background-color: #232f3e;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 24px;
+            margin-left: 20px;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ff9900;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .checkout-form, .order-summary {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .checkout-form {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .order-summary {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .checkout-form h2, .order-summary h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #ff9900;
+        }
+
+        .place-order-btn {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .place-order-btn:hover {
+            background-color: #ff8c00;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-item-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .order-item-details {
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+
+        .order-item-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .order-item-price {
+            color: #B12704;
+            font-weight: bold;
+        }
+
+        .order-total {
+            margin-top: 15px;
+            text-align: right;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        footer {
+            background-color: #232f3e;
+            color: white;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .footer-section li:hover {
+            text-decoration: underline;
+        }
+
+        .back-to-top {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            text-decoration: none;
+            background-color: #37475A;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .back-to-top:hover {
+            background-color: #485769;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display: flex; align-items: center;">
+            <a href="index.html" class="logo">BUKKY</a>
+            <div class="cart-icon" id="cartIcon">
+                🛒 <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="checkout-container">
+        <div class="checkout-form">
+            <h2>Billing & Shipping Information</h2>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                    <div class="error-message" id="fullNameError">Please enter your full name</div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message" id="emailError">Please enter a valid email address</div>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" required>
+                    <div class="error-message" id="addressError">Please enter your address</div>
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" required>
+                    <div class="error-message" id="cityError">Please enter your city</div>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select id="country" name="country" required>
+                        <option value="">Select a country</option>
+                        <option value="US">United States</option>
+                        <option value="CA">Canada</option>
+                        <option value="GB">United Kingdom</option>
+                        <!-- Add more countries as needed -->
+                    </select>
+                    <div class="error-message" id="countryError">Please select a country</div>
+                </div>
+                <div class="form-group">
+                    <label for="zipCode">ZIP/Postal Code</label>
+                    <input type="text" id="zipCode" name="zipCode" required>
+                    <div class="error-message" id="zipCodeError">Please enter a valid ZIP/Postal code</div>
+                </div>
+                <button type="submit" class="place-order-btn">Proceed to Payment</button>
+            </form>
+        </div>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div id="orderItems"></div>
+            <div class="order-total">
+                Total: $<span id="orderTotal">0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Get to Know Us</h3>
+                <ul>
+                    <li>CHAT WITH US</li>
+                    <li>HELP CENTER</li>
+                    <li>CONTACT US</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li>TERMS & CONDITIONS</li>
+                    <li>PRIVACY NOTICE</li>
+                    <li>COOKIE NOTICE</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Make Money With Us</h3>
+                <ul>
+                    <li>BECOME A SELLER</li>
+                    <li>REPORT A PRODUCT</li>
+                    <li>BLACK FRIDAY</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Let Us Help You</h3>
+                <ul>
+                    <li>DISPUTE RESOLUTION POLICY</li>
+                    <li>RETURNS & REFUND TIMELINE</li>
+                    <li>RETURN POLICY</li>
+                </ul>
+            </div>
+        </div>
+        <a href="#" class="back-to-top">Back to Top</a>
+    </footer>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cartIcon = document.getElementById('cartIcon');
+            const cartCount = document.querySelector('.cart-count');
+            const orderItems = document.getElementById('orderItems');
+            const orderTotal = document.getElementById('orderTotal');
+            const checkoutForm = document.getElementById('checkoutForm');
+            const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY'); // Replace with your Stripe Publishable Key
+
+            // Retrieve cart from localStorage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Update cart count
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+
+            // Display order summary
+            function updateOrderSummary() {
+                orderItems.innerHTML = '';
+                let total = 0;
+
+                if (cart.length === 0) {
+                    orderItems.innerHTML = '<p>Your cart is empty</p>';
+                    orderTotal.textContent = '0.00';
+                    return;
+                }
+
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+
+                    const orderItem = document.createElement('div');
+                    orderItem.className = 'order-item';
+                    orderItem.innerHTML = `
+                        <img src="${item.image}" alt="${item.title}" class="order-item-img">
+                        <div class="order-item-details">
+                            <div class="order-item-title">${item.title}</div>
+                            <div>Qty: ${item.quantity}</div>
+                            <div class="order-item-price">$${itemTotal.toFixed(2)}</div>
+                        </div>
+                    `;
+                    orderItems.appendChild(orderItem);
+                });
+
+                orderTotal.textContent = total.toFixed(2);
+            }
+
+            updateOrderSummary();
+
+            // Form validation and submission
+            checkoutForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                // Reset error messages
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.style.display = 'none';
+                });
+
+                let isValid = true;
+
+                // Validate form fields
+                const fullName = document.getElementById('fullName').value.trim();
+                if (!fullName) {
+                    document.getElementById('fullNameError').style.display = 'block';
+                    isValid = false;
+                }
+
+                const email = document.getElementById('email').value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!email || !emailRegex.test(email)) {
+                    document.getElementById('emailError').style.display = 'block';
+                    isValid = false;
+                }
+
+                const address = document.getElementById('address').value.trim();
+                if (!address) {
+                    document.getElementById('addressError').style.display = 'block';
+                    isValid = false;
+                }
+
+                const city = document.getElementById('city').value.trim();
+                if (!city) {
+                    document.getElementById('cityError').style.display = 'block';
+                    isValid = false;
+                }
+
+                const country = document.getElementById('country').value;
+                if (!country) {
+                    document.getElementById('countryError').style.display = 'block';
+                    isValid = false;
+                }
+
+                const zipCode = document.getElementById('zipCode').value.trim();
+                if (!zipCode) {
+                    document.getElementById('zipCodeError').style.display = 'block';
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    return;
+                }
+
+                if (cart.length === 0) {
+                    alert('Your cart is empty. Please add items to proceed.');
+                    return;
+                }
+
+                // Prepare billing and shipping data
+                const billingDetails = {
+                    fullName,
+                    email,
+                    address: {
+                        line1: address,
+                        city,
+                        country,
+                        postal_code: zipCode
+                    }
+                };
+
+                try {
+                    // Send cart and billing details to server to create Stripe Checkout Session
+                    const response = await fetch('/create-checkout-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            cart,
+                            billingDetails,
+                            successUrl: window.location.origin + '/success.html',
+                            cancelUrl: window.location.origin + '/checkout.html'
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create checkout session');
+                    }
+
+                    const { sessionId } = await response.json();
+
+                    // Redirect to Stripe Checkout
+                    const { error } = await stripe.redirectToCheckout({ sessionId });
+                    if (error) {
+                        alert('Error redirecting to checkout: ' + error.message);
+                    }
+                } catch (error) {
+                    alert('An error occurred: ' + error.message);
+                }
+            });
+
+            // Back to top button
+            const backToTop = document.querySelector('.back-to-top');
+            backToTop.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Cart icon redirects to main page
+            cartIcon.addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>

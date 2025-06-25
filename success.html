@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUKKY - Order Success</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            text-align: center;
+            padding: 50px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #232f3e;
+            text-decoration: none;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        a {
+            background-color: #ff9900;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        a:hover {
+            background-color: #ff8c00;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="logo">BUKKY</a>
+    <h1>Order Placed Successfully!</h1>
+    <p>Thank you for shopping with BUKKY. You’ll receive a confirmation email soon.</p>
+    <a href="index.html">Continue Shopping</a>
+    <script>
+        // Clear cart after successful order
+        localStorage.removeItem('cart');
+    </script>
+</body>
+</html>
